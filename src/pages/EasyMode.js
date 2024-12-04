@@ -3,7 +3,7 @@ import { Container, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-export default function Game(){
+export default function EasyMode(){
     let playerName = localStorage.getItem("playerName");
     let validatePlayer;
     const navigate = useNavigate();
