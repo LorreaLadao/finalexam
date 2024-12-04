@@ -54,13 +54,16 @@ export default function HardMode() {
 
     function handleTimeout() {
         setScore(score - 5);
+        setPaused(true); // Freeze the timer when the timeout occurs
         Swal.fire({
             title: "Timeout!",
             text: "You ran out of time!",
             icon: "error",
+        }).then(() => {
+            setPaused(true); // Resume the timer after the pop-up is closed
+            goToNextStage();
         });
-        goToNextStage();
-    }
+    }    
 
     function checkAnswer() {
         // Stop the timer when the submit button is clicked
