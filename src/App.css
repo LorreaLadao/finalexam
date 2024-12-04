@@ -12,6 +12,100 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
+/* General Flash Message Style */
+.flash-message {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  z-index: 1000;
+  animation: slideIn 1s ease-in-out forwards, slideOut 1s ease-in-out forwards;
+  animation-delay: 0s, 7s; /* Start exit animation after the message stays for 5 seconds */
+}
+
+.time-freeze-active {
+  color: #61dafb; /* Or any color you'd like */
+}
+
+.time-normal {
+  color: white; /* Default color when time freeze is not active */
+}
+
+/* Shaking animation to mimic freezing effect */
+@keyframes freezing {
+  0% {
+      transform: translateX(0);
+  }
+  25% {
+      transform: translateX(-5px);
+  }
+  50% {
+      transform: translateX(5px);
+  }
+  75% {
+      transform: translateX(-5px);
+  }
+  100% {
+      transform: translateX(0);
+  }
+}
+
+/* Apply the freezing animation when time freeze is active */
+.time-freeze-active {
+  color: #61dafb; /* Time freeze color */
+  animation: freezing 0.5s ease-in-out infinite; /* Shaking effect */
+}
+
+.time-normal {
+  color: white; /* Default color when time freeze is not active */
+}
+
+
+/* Double Flash Message */
+.double {
+  background-color: #07a007;
+  top: 20%; /* Position below the freeze message */
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px); /* Start from above */
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0); /* Slide into position */
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0); /* Stay in place */
+  }
+  100% {
+    opacity: 1; /* Keep the message visible */
+    transform: translateY(0); /* Stay in place */
+  }
+}
+
+/* Slide-out animation */
+@keyframes slideOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0); /* Stay in place initially */
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(30px); /* Slide out and fade away */
+  }
+}
+
+
+
+
 
 .App-header {
   background-color: #282c34;

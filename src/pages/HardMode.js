@@ -6,24 +6,28 @@ import Swal from "sweetalert2";
 export default function HardMode() {
     const playerName = localStorage.getItem("playerName");
     const navigate = useNavigate();
-
     const [randomNum1, setRandomNum1] = useState(0);
     const [randomNum2, setRandomNum2] = useState(0);
     const [answer, setAnswer] = useState("");
     const [stage, setStage] = useState(1);
     const [score, setScore] = useState(0);
     const [timer, setTimer] = useState(10);
+    const [operation, setOperation] = useState('+');
     const [timeFreezeUsed, setTimeFreezeUsed] = useState(false);
+    const [timeFreezeActive, setTimeFreezeActive] = useState(false);
     const [doublePointsUsed, setDoublePointsUsed] = useState(false);
+    const [doublePointsActive, setDoublePointsActive] = useState(false);  // New state to track if double points are active
     const [flashing, setFlashing] = useState(false);
     const [paused, setPaused] = useState(false); // Paused state for the timer
+    const [flashMessage, setFlashMessage] = useState("");
 
     useEffect(() => {
         if (!playerName) {
-            navigate("/");
+            navigate("/"); // Redirect to home if no player name
             return;
         }
         generateRandomNumbers();
+        pauseBeforeStart(); // Pause before starting
     }, []);
 
     useEffect(() => {
@@ -37,197 +41,392 @@ export default function HardMode() {
         }
     }, [timer, paused]); // Listen to paused state
 
+    function pauseBeforeStart() {
+        console.log("Current stage:", stage); // Log the current stage
+    
+        if (stage === 1) { // Only pause at stage 1
+            setPaused(true); // Pause initially
+    
+            Swal.fire({
+                title: "Game Paused",
+                text: "Click 'OK' to start!",
+                icon: "info",
+                showConfirmButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let countdown = 3;
+                    const countdownInterval = setInterval(() => {
+                        Swal.fire({
+                            title: `Resuming in ${countdown}...`,
+                            text: "Get ready!",
+                            icon: "info",
+                            showConfirmButton: false,
+                            timer: 1000,
+                            timerProgressBar: true,
+                        });
+    
+                        countdown -= 1;
+    
+                        if (countdown < 1) {
+                            clearInterval(countdownInterval); // Stop countdown
+                            setPaused(false); // Resume game
+                        }
+                    }, 1000);
+                }
+            });
+        } else {
+            setPaused(false); // No pause if not at stage 1
+        }
+    
+        // Ensure the time freeze countdown is paused when the game is paused
+        if (timeFreezeActive) {
+            setPaused(true); // Pause both the game and time freeze
+        }
+    }
+    
+
     function generateRandomNumbers() {
-        const num1 = Math.floor(Math.random() * 100) + 1;
-        const num2 = Math.floor(Math.random() * 100) + 1;
+        let num1, num2, operation;
+    
+        // For stages 1-5, only addition with numbers from 1 to 100
+        if (stage <= 5) {
+            num1 = Math.floor(Math.random() * 100) + 1;
+            num2 = Math.floor(Math.random() * 100) + 1;
+            operation = "+";
+        }
+        // For stages 6-10, 50-50 chance of addition or subtraction (with no negative results)
+        else {
+            num1 = Math.floor(Math.random() * 100) + 1;
+            num2 = Math.floor(Math.random() * 100) + 1;
+    
+            // Randomly choose between addition or subtraction
+            if (Math.random() < 0.5) {
+                operation = "+";
+            } else {
+                operation = "-";
+                // Ensure num2 is not greater than num1 for subtraction
+                if (num2 > num1) {
+                    [num1, num2] = [num2, num1];
+                }
+            }
+        }
+    
         setRandomNum1(num1);
         setRandomNum2(num2);
-
-        // Handle flashing numbers for stages 5-10
-        if (stage >= 5) {
-            setFlashing(true);
-            setTimeout(() => setFlashing(false), 5000); // Flash for 5 seconds
-        }
-
-        setTimer(10); // Reset timer for each stage
+        setOperation(operation);
+        setTimer(10); // Reset timer for next stage
     }
-
+    
     function handleTimeout() {
-        setScore(score - 5);
-        setPaused(true); // Freeze the timer when the timeout occurs
+        setScore(score - 5);  // Decrease the score on timeout
+    
+        // Display timeout message to the user
         Swal.fire({
             title: "Timeout!",
             text: "You ran out of time!",
             icon: "error",
-        }).then(() => {
-            setPaused(true); // Resume the timer after the pop-up is closed
-            goToNextStage();
-        });
-    }    
-
-    function checkAnswer() {
-        // Stop the timer when the submit button is clicked
-        setPaused(true);
-
-        const correctAnswer = randomNum1 + randomNum2;
-        let points = 0;
-
-        if (Number(answer) === correctAnswer) {
-            const timeBonus =
-                timer >= 7 ? 15 : timer >= 4 ? 10 : timer >= 1 ? 5 : 0;
-
-            points = timeBonus;
-            if (doublePointsUsed) {
-                points *= 2;
-                setDoublePointsUsed(false);
+            willClose: () => {
+                goToNextStage();
             }
-
-            Swal.fire({
-                title: "Correct!",
-                text: `You earned ${points} points!`,
-                icon: "success",
-            }).then(() => {
-                // After pop-up is closed, resume the timer
-                setPaused(false);
-                setScore(score + points);
-                goToNextStage();
-            });
-        } else {
-            Swal.fire({
-                title: "Incorrect!",
-                text: "You lost 10 points!",
-                icon: "error",
-            }).then(() => {
-                // After pop-up is closed, resume the timer
-                setPaused(false);
-                setScore(score - 10);
-                goToNextStage();
-            });
-        }
+        });
     }
 
+    const startCountdown = () => {
+        let countdown = 6; // Countdown duration (6 seconds)
+        
+        // Start the countdown interval
+        let countdownInterval = setInterval(() => {
+            if (!paused) { // Only proceed if the game is not paused
+                countdown -= 1;
+                
+                // Check if the countdown reaches 0
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval); // Stop the countdown
+                    setTimeFreezeActive(false); // Set timeFreezeActive to false after freeze ends
+                    setPaused(false); // Resume the game after countdown finishes
+                }
+            }
+        }, 1000);
+    
+        // Freeze the countdown for exactly 6 seconds if timeFreeze is active
+        if (timeFreezeActive) {
+            setPaused(true); // Pause the game immediately when time freeze is active
+    
+            // After 6 seconds, resume the countdown and the game
+            setTimeout(() => {
+                setPaused(false); // Unpause the game after 6 seconds
+                clearInterval(countdownInterval); // Ensure countdown finishes
+            }, 6000); // Freeze duration is 6 seconds
+        }
+    
+    };
+    
+    
+    function checkAnswer() {
+        // Only pause if double points are not active and the game is not paused
+        if (!doublePointsActive && !paused) {
+            setPaused(true); // Stop timer when answer is submitted
+        }
+    
+        let correctAnswer;
+    
+        // Calculate the correct answer based on the operation
+        if (operation === "+") {
+            correctAnswer = randomNum1 + randomNum2;
+        } else if (operation === "-") {
+            correctAnswer = randomNum1 - randomNum2;
+        }
+    
+        let points = 0;
+    
+        // Check if the answer is correct
+        if (Number(answer) === correctAnswer) {
+            const timeBonus = timer >= 7 ? 15 : timer >= 4 ? 10 : timer >= 1 ? 5 : 0;
+    
+            points = timeBonus;
+    
+            // If double points are active, apply the bonus
+            if (doublePointsActive) {
+                points *= 2;
+    
+                // Update the score immediately without popups
+                setScore(score + points);
+    
+                // Immediately generate a new set of random numbers for the next question
+                generateRandomNumbers();
+    
+                // Move to the next stage without waiting for a popup
+                goToNextStage();
+            } else {
+                // Standard pop-up message for regular points (if double points is not active)
+                Swal.fire({
+                    title: "Correct!",
+                    text: `You earned ${points} points!`,
+                    icon: "success",
+                }).then(() => {
+                    setScore(score + points);
+                    goToNextStage();
+                });
+            }
+        } else {
+            // Handle incorrect answer
+            if (doublePointsActive) {
+                // If double points are active, proceed without a popup
+                setScore(score - 10); // Deduct 10 points for incorrect answer
+                setPaused(true); // Pause game on incorrect answer when double points are active
+                setAnswer(""); // Clear the answer input
+    
+                // Immediately generate a new set of random numbers for the next question
+                generateRandomNumbers();
+    
+                // Move to the next stage without a popup
+                goToNextStage();
+            } else {
+                // Standard pop-up for incorrect answer (without double points)
+                Swal.fire({
+                    title: "Incorrect!",
+                    text: "You lost 10 points!",
+                    icon: "error",
+                }).then(() => {
+                    setScore(score - 10); // Deduct points for incorrect answer
+                    setAnswer(""); // Clear the answer input
+                    goToNextStage(); // Proceed to the next stage
+                });
+            }
+        }
+    
+        // Handle the time freeze effect here
+        if (timeFreezeActive) {
+            setPaused(true); // Pause the game and the countdown if time freeze is active
+        } else {
+            // If not in time freeze, resume the countdown if game is unpaused
+            if (!paused) {
+                startCountdown(); // Continue the countdown from where it left off
+            }
+        }
+    }
+    
+    
     function goToNextStage() {
-        if (stage === 10) {
+        // Increment the stage and prepare for the next round
+        setStage((prevStage) => prevStage + 1); // Increment the stage
+        setAnswer(""); // Clear the answer input
+        generateRandomNumbers(); // Generate new random numbers for the next stage
+    
+        // Handle timer behavior based on active modifiers
+        if (timeFreezeActive) {
+            setPaused(true); // Keep the timer paused if time freeze is active
+        } else {
+            setPaused(false); // Resume the timer if no time freeze
+            if (timer === 0) {
+                setTimer(10); // Reset the timer only if it reached 0, otherwise keep the current value
+            }
+        }
+    
+        // Check if the stage is 10 (the last stage)
+        if (stage === 9) { // Ensure this check happens before the stage is incremented
             Swal.fire({
                 title: "Congratulations!",
-                text: `You completed Hard Mode with a score of ${score}!`,
+                text: `You completed Hard Mode with a score of ${score - 10}!`,
                 icon: "success",
-            }).then(() => navigate("/select-level"));
-        } else {
-            setStage(stage + 1);
-            setAnswer("");
-            generateRandomNumbers();
+            }).then(() => {
+                // Navigate to the select-level page after completing the last stage
+                navigate("/select-level");
+            });
         }
     }
-
+    
+    
     function useTimeFreeze() {
         if (timeFreezeUsed) {
-            // If timeFreeze has already been used, show an alert or do nothing
-            Swal.fire({
-                title: "Time Freeze Already Used!",
-                text: "You can only use the Time Freeze once per session.",
-                icon: "warning",
-            });
+            // Time freeze already used, do nothing or handle the notification
         } else {
-            // If timeFreeze hasn't been used, proceed with the activation
+            // Activate time freeze for 5 seconds
             setTimeFreezeUsed(true);
-            setPaused(true); // Pause the timer
-            setTimer(timer + 5); // Add 5 seconds to the timer
-            Swal.fire({
-                title: "Time Freeze Activated!",
-                text: "Timer paused for 5 seconds.",
-                icon: "info",
-            }).then(() => {
-                setPaused(false); // Resume the timer after pop-up is closed
-            });
+            setTimeFreezeActive(true);
+    
+            setPaused(true); // Pause the timer while time freeze is active
+    
+            // Save the countdown state
+            let countdownInterval;
+    
+    
+            // Start the countdown when time freeze is activated
+            startCountdown();
+    
+            // Listen for the game pause and resume
+            if (paused) {
+                // When the game is paused, stop the countdown (don't restart it)
+                clearInterval(countdownInterval); 
+            } else {
+                // When the game is resumed, continue the countdown from where it was
+                startCountdown(); // Continue the countdown from the current state
+            }
         }
     }
     
-
+    
     function useDoublePoints() {
         if (doublePointsUsed) {
-            // If double points have already been used, show an alert or do nothing
-            Swal.fire({
-                title: "Double Points Already Used!",
-                text: "You can only activate Double Points once per session.",
-                icon: "warning",
-            });
+            // If double points are already used, return early
+            return;
         } else {
-            // If double points haven't been used, proceed with the activation
-            setDoublePointsUsed(true);
-            Swal.fire({
-                title: "Double Points Activated!",
-                text: "Next correct answer will earn double points.",
-                icon: "info",
-            }).then(() => {
-                // Continue with the game after the pop-up is closed
-            });
+            setDoublePointsUsed(true); // Mark double points as used
+            setDoublePointsActive(true); // Set double points as active
+            setFlashing(true); // Start flashing effect
+    
+            let countdown = 5;  // Set the initial countdown value (in seconds)
+    
+            // Set the initial flash message with countdown
+            setFlashMessage(
+                <div className="flash-message double rounded mb-4" style={{ width: '1700%' }}>
+                    Double Points activated for {countdown} seconds!
+                </div>
+            );
+    
+            // Start countdown and synchronize with the timer
+            const countdownInterval = setInterval(() => {
+                setFlashMessage(
+                    <div className={`flash-message double rounded mb-4 ${flashing ? "flashing" : ""}`} style={{ width: '1700%' }}>
+                        Double Points activated for {countdown} seconds!
+                    </div>
+                );
+    
+                countdown--; // Decrease the countdown
+    
+                if (countdown <= -1) {
+                    clearInterval(countdownInterval);  // Stop countdown when it reaches 0
+                    setFlashing(false);  // Stop flashing effect
+                    setDoublePointsActive(false);  // Set double points as inactive
+                    setFlashMessage(  // Final flash message when countdown ends
+                        <div className="flash-message double rounded mb-4" style={{ width: '1700%' }}>
+                        Double Points Deactivated
+                    </div>
+                    );
+                }
+            }, 1000);  // Update every second
         }
     }
     
+    
     return (
-        <Container fluid className="d-flex flex-column m-0 p-0 bg-danger p-5 text-white">
-            <Container fluid className="d-flex">
-                <h1 className="me-auto">Welcome, {playerName}!</h1>
-                <h1>Score: {score}</h1>
-                <h1>Time: {timer}</h1>
-            </Container>
 
-            <Container fluid className="vh-100 d-flex align-items-center justify-content-center">
-                <Container className="col-6 d-flex align-items-center justify-content-center flex-column border border-dark p-5 rounded-3 shadow bg-light text-dark">
-                    <h1 className="display-6 fw-bold mb-4">Stage {stage}</h1>
+         <Container fluid className="d-flex flex-column m-0 p-0 bg-danger p-5 text-white">
+          {/* Flash Messages */}
+          {flashMessage && (
+            <div className={`flash-message text-dark p-3 rounded mb-2`}>
+              <h5>{flashMessage}</h5>
+            </div>
+          )}
+          
+    
+          <Container fluid className="d-flex">
+            <h1 className="me-auto">Welcome, {playerName}!</h1>
+            <h1>Score: {score}</h1>
+            <h1 className={timeFreezeActive ? 'time-freeze-active' : 'time-normal'}>
+    Time: {timer}
+</h1>
 
-                    <Container className="col-5 d-flex align-items-center justify-content-center gap-1">
-                        {(!flashing || stage < 5) && (
-                            <>
-                                <Container className="col-12 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
-                                    <h1 className="display-3 fw-bold">{randomNum1}</h1>
-                                </Container>
-                                <Container className="col-12 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
-                                    <h1 className="display-3 fw-bold">{randomNum2}</h1>
-                                </Container>
-                            </>
-                        )}
+          </Container>
+    
+          <Container fluid className="vh-100 d-flex align-items-center justify-content-center">
+            <Container className="col-6 d-flex align-items-center justify-content-center flex-column border border-dark p-5 rounded-3 shadow bg-light text-dark">
+              <h1 className="display-6 fw-bold mb-4">Stage {stage}</h1>
+    
+              <Container className="col-5 d-flex align-items-center justify-content-center gap-1">
+                {(!flashing || stage >= 1) && (
+                  <>
+                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                      <h1 className="display-3 fw-bold">{randomNum1}</h1>
                     </Container>
-
-                    <Form className="mt-5">
-                        <Form.Group className="mb-3 d-flex flex-column justify-content-center align-items-center">
-                            <Form.Control
-                                type="number"
-                                placeholder="Type your answer"
-                                value={answer}
-                                onChange={(e) => setAnswer(e.target.value)}
-                                className="rounded-pill"
-                                size="lg"
-                            />
-                            <Button
-                                className="rounded-pill mt-5 w-100"
-                                onClick={checkAnswer}
-                                disabled={timer === 0}
-                            >
-                                Submit
-                            </Button>
-                        </Form.Group>
-                    </Form>
-
-                    <Container className="d-flex gap-3">
-                        <Button
-                            variant="primary"
-                            onClick={useTimeFreeze}
-                            disabled={timeFreezeUsed}
-                        >
-                            Time Freeze
-                        </Button>
-                        <Button
-                            variant="success"
-                            onClick={useDoublePoints}
-                            disabled={doublePointsUsed}
-                        >
-                            Double Points
-                        </Button>
+                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                      <h3 className="display-3 fw-bold">{operation}</h3>
                     </Container>
-                </Container>
-            </Container>
+                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                      <h1 className="display-3 fw-bold">{randomNum2}</h1>
+                    </Container>
+                  </>
+                )}
+              </Container>
+    
+              <Form className="mt-5">
+                <Form.Group className="mb-3 d-flex flex-column justify-content-center align-items-center">
+                  <Form.Control
+                    type="number"
+                    placeholder="Type your answer"
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    className="rounded-pill"
+                    size="lg"
+                  />
+                  <Button
+                    className="rounded-pill mt-5 w-100"
+                    onClick={checkAnswer}
+                    disabled={timer === 0}
+                  >
+                    Submit
+                  </Button>
+                </Form.Group>
+              </Form>
+    
+              <Container className="d-flex gap-3">
+                <Button
+                  variant="primary"
+                  onClick={useTimeFreeze} // Updated handler
+                  disabled={timeFreezeUsed}
+                >
+                  Time Freeze
+                </Button>
+                <Button
+                  variant="success"
+                  onClick={useDoublePoints}
+                  disabled={doublePointsUsed}
+                >
+                  Double Points
+                </Button>
+              </Container>
+              </Container>
+          </Container>
         </Container>
-    );
-}
+      );
+    }
