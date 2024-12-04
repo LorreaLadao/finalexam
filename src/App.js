@@ -15,7 +15,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/" element={<WelcomePage />} />
+          <Route path=" " element={<WelcomePage />} />
           <Route path="/select-level" element={<LevelSelectPage />} />
           <Route path="/easy" element={<EasyMode />} />
           <Route path="/medium" element={<MediumMode />} />
