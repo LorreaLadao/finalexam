@@ -17,7 +17,6 @@ export default function HardMode() {
     const [doublePointsUsed, setDoublePointsUsed] = useState(false);
     const [flashing, setFlashing] = useState(false);
     const [paused, setPaused] = useState(false); // Paused state for the timer
-    
 
     useEffect(() => {
         if (!playerName) {
@@ -28,13 +27,15 @@ export default function HardMode() {
     }, []);
 
     useEffect(() => {
-        if (timer > 0) {
+        if (!paused && timer > 0) {
             const timerInterval = setInterval(() => setTimer(timer - 1), 1000);
             return () => clearInterval(timerInterval);
         } else {
-            handleTimeout();
+            if (timer === 0) {
+                handleTimeout();
+            }
         }
-    }, [timer]);
+    }, [timer, paused]); // Listen to paused state
 
     function generateRandomNumbers() {
         const num1 = Math.floor(Math.random() * 100) + 1;
@@ -62,6 +63,9 @@ export default function HardMode() {
     }
 
     function checkAnswer() {
+        // Stop the timer when the submit button is clicked
+        setPaused(true);
+
         const correctAnswer = randomNum1 + randomNum2;
         let points = 0;
 
@@ -79,18 +83,24 @@ export default function HardMode() {
                 title: "Correct!",
                 text: `You earned ${points} points!`,
                 icon: "success",
+            }).then(() => {
+                // After pop-up is closed, resume the timer
+                setPaused(false);
+                setScore(score + points);
+                goToNextStage();
             });
-            setScore(score + points);
         } else {
             Swal.fire({
                 title: "Incorrect!",
                 text: "You lost 10 points!",
                 icon: "error",
+            }).then(() => {
+                // After pop-up is closed, resume the timer
+                setPaused(false);
+                setScore(score - 10);
+                goToNextStage();
             });
-            setScore(score - 10);
         }
-
-        goToNextStage();
     }
 
     function goToNextStage() {
@@ -108,28 +118,50 @@ export default function HardMode() {
     }
 
     function useTimeFreeze() {
-        if (!timeFreezeUsed) {
+        if (timeFreezeUsed) {
+            // If timeFreeze has already been used, show an alert or do nothing
+            Swal.fire({
+                title: "Time Freeze Already Used!",
+                text: "You can only use the Time Freeze once per session.",
+                icon: "warning",
+            });
+        } else {
+            // If timeFreeze hasn't been used, proceed with the activation
             setTimeFreezeUsed(true);
-            setTimer(timer + 5);
+            setPaused(true); // Pause the timer
+            setTimer(timer + 5); // Add 5 seconds to the timer
             Swal.fire({
                 title: "Time Freeze Activated!",
                 text: "Timer paused for 5 seconds.",
                 icon: "info",
+            }).then(() => {
+                setPaused(false); // Resume the timer after pop-up is closed
             });
         }
     }
+    
 
     function useDoublePoints() {
-        if (!doublePointsUsed) {
+        if (doublePointsUsed) {
+            // If double points have already been used, show an alert or do nothing
+            Swal.fire({
+                title: "Double Points Already Used!",
+                text: "You can only activate Double Points once per session.",
+                icon: "warning",
+            });
+        } else {
+            // If double points haven't been used, proceed with the activation
             setDoublePointsUsed(true);
             Swal.fire({
                 title: "Double Points Activated!",
                 text: "Next correct answer will earn double points.",
                 icon: "info",
+            }).then(() => {
+                // Continue with the game after the pop-up is closed
             });
         }
     }
-
+    
     return (
         <Container fluid className="d-flex flex-column m-0 p-0 bg-danger p-5 text-white">
             <Container fluid className="d-flex">
