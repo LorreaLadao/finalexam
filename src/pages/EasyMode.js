@@ -9,7 +9,7 @@ export default function EasyMode() {
 
   const [randomNum1, setRandomNum1] = useState(0);
   const [randomNum2, setRandomNum2] = useState(0);
-  const [answer, setAnswer] = useState(0);
+  const [answer, setAnswer] = useState();
   let [stage, setStage] = useState(1);
   let [score, setScore] = useState(0);
 
@@ -17,20 +17,18 @@ export default function EasyMode() {
     if (playerName == null || playerName == "") {
       navigate("/"); // Redirect to home if no player name is found
     }
-
     generateRandomNum();
-  }, [randomNum1, randomNum2]);
+  },[] );
 
   if (playerName == null || playerName == "") {
     return null;
   }
 
   function generateRandomNum() {
-    let num1 = Math.floor(Math.random() * 100) + 1;
-    setRandomNum1(num1);
-
-    let num2 = Math.floor(Math.random() * 100) + 1;
-    setRandomNum2(num2);
+    let randomNum1 = Math.floor(Math.random() * 100) + 1;
+    let randomNum2 = Math.floor(Math.random() * 100) + 1;
+    setRandomNum1(randomNum1);
+    setRandomNum2(randomNum2);
   }
 
   function checkAnswer() {
@@ -51,7 +49,7 @@ export default function EasyMode() {
           message: "Redirecting to level select...",
           icon: "success",
         }).then(() => {
-          navigate("/level-select"); // Redirect to level select page (easy, medium, hard)
+          navigate("/select-level"); // Redirect to level select page (easy, medium, hard)
         });
       } else {
         generateRandomNum();
