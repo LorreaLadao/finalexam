@@ -172,10 +172,9 @@ export default function MediumMode() {
   };
 
   return (
-    <Container fluid className="d-flex flex-column m-0 p-0 bg-warning p-5">
+    <Container fluid className="d-flex flex-column m-0 p-0 p-5">
       <Container fluid className="d-flex">
-        <h1 className="me-auto">Welcome, {playerName}!</h1>
-        <h1>SCORE: {score}</h1>
+        <h1 className="me-auto text-white"> SCORE: {score} </h1>
         <h1 className={timeFreezeActive ? "time-freeze-active" : "time-normal"}>
           Time: {timer}
         </h1>
@@ -189,18 +188,18 @@ export default function MediumMode() {
           className="row d-flex align-items-center justify-content-center"
         >
           <Container
-            className="col-6 d-flex align-items-center justify-content-center flex-column border border-dark p-5 rounded-3 shadow"
+            className="game-card col-6 d-flex align-items-center justify-content-center flex-column p-5 rounded-3 shadow"
             data-aos="flip-left"
           >
-            <h1 className="display-6 fw bold mb-4">PROBLEM {stage}</h1>
+            <h1 className="display-6 fw bold mb-4 text-white fw-bold">Problem {stage}</h1>
             <Container className="col-5 d-flex align-items-center justify-content-center gap-1">
-              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
+              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 w-75 rounded-3 ms-4">
                 <h1 className="display-3 fw-bold">{randomNum1}</h1>
               </Container>
-              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
+              <Container className="col-12 bg-transparent d-flex align-items-center justify-content-center w-50 rounded-3 text-white">
                       <h3 className="display-3 fw-bold">{operation}</h3>
               </Container>
-              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
+              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 w-75 rounded-3 me-1">
                 <h1 className="display-3 fw-bold">{randomNum2}</h1>
               </Container>
             </Container>
@@ -213,15 +212,10 @@ export default function MediumMode() {
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
                   onKeyDown={handleKeyDown} // Handle Enter key
-                  className="rounded-pill"
-                  size="lg"
+                  className="rounded-3 p-2"
                 />
-                <Button
-                  className="rounded-pill mt-5 w-100"
-                  onClick={checkAnswer}
-                  disabled={timer === 0 || isSwalOpen} // Disable button if Swal is open
-                >
-                  Submit
+                <Button className="rounded-3 mt-2 w-100 p-2 bg-warning text-white custom-border" onClick={checkAnswer}>
+                  Check
                 </Button>
               </Form.Group>
             </Form>

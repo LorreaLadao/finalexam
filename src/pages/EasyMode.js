@@ -72,27 +72,27 @@ export default function EasyMode() {
   };
 
   return (
-    <Container fluid className="d-flex flex-column m-0 p-0 bg-warning p-5">
+    <Container fluid className="d-flex flex-column m-0 p-0 p-5">
       {/* PLAYER NAME */}
       <Container fluid className="d-flex">
-        <h1 className="me-auto">Welcome, {playerName}!</h1>
-        <h1>SCORE {score}</h1>
+        <h1 className="me-auto"></h1>
+        <h1 className="text-white">SCORE {score}</h1>
       </Container>
 
       <Container fluid className="vh-100 d-flex align-items-center justify-content-center">
         <Container fluid className="row d-flex align-items-center justify-content-center">
-          <Container className="col-6 d-flex align-items-center justify-content-center flex-column border border-dark p-5 rounded-3 shadow" data-aos="flip-left">
-          <h1 className="display-6 fw bold mb-4">PROBLEM {stage}</h1>
+          <Container className="col-6 d-flex align-items-center justify-content-center flex-column p-5 rounded-3 game-card" data-aos="flip-left">
+          <h1 className="display-6 fw-bold mb-4 game-title">Problem {stage}</h1>
             <Container className="col-5 d-flex align-items-center justify-content-center gap-1">
-              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
+              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 w-75 rounded-3 ms-42 me-1">
                 <h1 className="display-3 fw-bold">{randomNum1}</h1>
               </Container>
 
-              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
+              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 w-75 rounded-3 ms-2 me-1">
                 <h1 className="display-3 fw-bold">+</h1>
               </Container>
 
-              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
+              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 w-75 rounded-3 ms-2 me-1">
                 <h1 className="display-3 fw-bold">{randomNum2}</h1>
               </Container>
             </Container>
@@ -101,16 +101,15 @@ export default function EasyMode() {
               <Form.Group className="mb-3 d-flex flex-column justify-content-center align-items-center" controlId="exampleForm.ControlInput1">
                 <Form.Control
                   type="number"
-                  placeholder="TYPE YOUR ANSWER"
+                  placeholder="Type your answer"
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
-                  className="rounded-pill"
-                  size="lg"
+                  className="rounded-3 p-2"
                   onKeyDown={handleEnter} // Detects Enter key press
                 />
 
-                <Button className="rounded-pill mt-5 w-100" onClick={checkAnswer}>
-                  {stage === 10 ? "SUBMIT" : "Submit"}
+                <Button className="rounded-3 mt-2 w-100 p-2 bg-warning text-white  custom-border" onClick={checkAnswer}>
+                  {stage === 10 ? "SUBMIT" : "Check"}
                 </Button>
               </Form.Group>
             </Form>

@@ -115,7 +115,7 @@ export default function HardMode() {
         setRandomNum1(num1);
         setRandomNum2(num2);
         setOperation(operation);
-        setTimer(10); // Reset timer for next stage
+        setTimer(10)
     }
     
     function handleTimeout() {
@@ -379,7 +379,7 @@ export default function HardMode() {
     
     return (
 
-        <Container fluid className="d-flex flex-column m-0 p-0 bg-danger p-5 text-white">
+        <Container fluid className="d-flex flex-column m-0 p-0 p-5 text-white">
         {/* Flash Messages */}
         {flashMessage && (
           <div className={`flash-message text-dark p-3 rounded mb-2`}>
@@ -387,7 +387,7 @@ export default function HardMode() {
           </div>
         )}
 
-<Container fluid className="d-flex flex-column m-0 p-0 bg-danger p-5 text-white">
+<Container fluid className="d-flex flex-column m-0 p-0 p-5 text-white">
           {/* Flash Messages */}
           {flashFreeze && (
             <div className={`flash-message text-dark p-3 rounded mb-2`}>
@@ -397,8 +397,7 @@ export default function HardMode() {
           
     
           <Container fluid className="d-flex">
-            <h1 className="me-auto">Welcome, {playerName}!</h1>
-            <h1>Score: {score}</h1>
+            <h1 className="me-auto text-white">Score: {score}</h1>
             <h1 className={timeFreezeActive ? 'time-freeze-active' : 'time-normal'}>
     Time: {timer}
 </h1>
@@ -406,23 +405,23 @@ export default function HardMode() {
           </Container>
     
           <Container fluid className="vh-100 d-flex align-items-center justify-content-center">
-            <Container className="col-6 d-flex align-items-center justify-content-center flex-column border border-dark p-5 rounded-3 shadow bg-light text-dark">
-              <h1 className="display-6 fw-bold mb-4">PROBLEM {stage}</h1>
+            <Container className="game-card col-6 d-flex align-items-center justify-content-center flex-column p-5 rounded-3 shadow text-dark">
+              <h1 className="display-6 fw-bold mb-4 text-white"> Problem {stage}</h1>
     
               <Container className="col-5 d-flex align-items-center justify-content-center gap-1">
               {!flashing || stage >= 1 ? (
                 <>
                     {timer > 5 && (
-                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                    <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 w-75 rounded-3 ms-4">
                         <h1 className="display-3 fw-bold">{randomNum1}</h1>
                     </Container>
                     )}
-                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                    <Container className="col-12 bg-transparent d-flex align-items-center justify-content-center w-50 rounded-3 text-white">
                     <h3 className="display-3 fw-bold">{operation}</h3>
                     </Container>
                     {timer > 5 && (
-                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
-                        <h1 className="display-3 fw-bold">{randomNum2}</h1>
+                    <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 w-75 rounded-3 me-4">
+                            <h1 className="display-3 fw-bold">{randomNum2}</h1>
                     </Container>
                     )}
                 </>
@@ -436,6 +435,7 @@ export default function HardMode() {
                 <Form.Control
                 type="number"
                 placeholder="Type your answer"
+                className="rounded-3 p-2"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
                 onKeyDown={(e) => {
@@ -444,31 +444,26 @@ export default function HardMode() {
                         checkAnswer(); // Call the checkAnswer function
                     }
                 }}
-                className="rounded-pill"
-                size="lg"
             />
-                  <Button
-                    className="rounded-pill mt-5 w-100"
-                    onClick={checkAnswer}
-                    disabled={timer === 0}
-                  >
-                    Submit
+                  <Button className="rounded-3 mt-2 w-100 p-2 bg-warning text-white custom-border" onClick={checkAnswer}>
+                    Check
                   </Button>
                 </Form.Group>
               </Form>
     
-              <Container className="d-flex gap-3">
+              <Container className="d-flex gap-2 text justify-content-center">
                 <Button
                   variant="primary"
                   onClick={useTimeFreeze} // Updated handler
                   disabled={timeFreezeUsed}
-                >
+                  className="w-25 custom-border"                >
                   Time Freeze
                 </Button>
                 <Button
                   variant="success"
                   onClick={useDoublePoints}
                   disabled={doublePointsUsed}
+                  className="w-25 custom-border"    
                 >
                   Double Points
                 </Button>

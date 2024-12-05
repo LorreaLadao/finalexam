@@ -9,12 +9,15 @@ import 'aos/dist/aos.css';
 import EasyMode from './pages/EasyMode';
 import MediumMode from './pages/MediumMode';
 import HardMode from './pages/HardMode';
+import Background from './pages/Background/backrgound';
+
 // import Scoreboard from './pages/Scoreboard';
 
 function App() {
   AOS.init();
   return (
     <BrowserRouter>
+    <Background />
       <Routes>
           <Route path="" element={<WelcomePage />} />
           <Route path="/select-level" element={<LevelSelectPage />} />

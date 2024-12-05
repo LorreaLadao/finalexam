@@ -27,11 +27,6 @@
   animation-delay: 0s, 7s; /* Start exit animation after the message stays for 5 seconds */
 }
 
-.freeze-notif{
-  background-color: #0c708b;
-  color: white;
-}
-
 .time-freeze-active {
   color: #61dafb; /* Or any color you'd like */
 }
@@ -135,3 +130,130 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+
+/* Game Container */
+.game-container {
+  max-width: 50px; /* Dynamic width based on content */
+  border-radius: 20px; /* Rounded corners */
+  background: #312771; /* White background */
+  border: 5px solid white;
+  padding: 30px;
+  margin: auto; /* Centers the container horizontally */
+  margin: 0 10%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  position: absolute; /* Required for vertical centering */
+  top: 50%; /* Center vertically */
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.game-card {
+  max-width: 50px; /* Dynamic width based on content */
+  border-radius: 20px; /* Rounded corners */
+  background: #312771d1; /* White background */
+  border: 5px solid white;
+  padding: 30px;
+  margin: auto; /* Centers the container horizontally */
+  margin: 0 10%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  position: absolute; /* Required for vertical centering */
+}
+
+
+/* Title */
+.game-title {
+  font-size: 2.5rem;
+  color: white;
+  margin-bottom: 20px;
+  text-align: center;
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.game-input,
+.game-button {
+  width: 100%;
+  height: auto;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+
+
+.game-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.game-button:hover {
+  background-color: #45a049;
+}
+
+.rounded-pill {
+  border-radius: 25px;
+}
+
+.select-container {
+  border-radius: 20px; /* Rounded corners */
+  background: #312771d3; /* White background */
+  border: 5px solid white;
+  padding: 30px;
+  margin: auto; /* Centers the container horizontally */
+  margin: 0 10%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  position: absolute; /* Required for vertical centering */
+  transform: translate(-50%, -50%);
+}
+
+
+
+
+
+/* Flash message styling */
+.flash-message {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #4caf50;
+  color: #fff;
+  padding: 20px 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  font-size: 1.5rem;
+  font-weight: bold;
+  animation: fade-in-out 3s ease forwards;
+  z-index: 1000;
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+}
+
+
+
+.custom-border {
+  border: 4px solid white !important;
+}
+
