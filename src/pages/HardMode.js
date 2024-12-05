@@ -120,13 +120,13 @@ export default function HardMode() {
     function handleTimeout() {
         if (doublePointsActive) {
             // If double points are active, deduct 10 points and skip the popup
-            setScore((prevScore) => prevScore - 5); // Decrease the score by 10
+            setScore((prevScore) => prevScore - 2); // Decrease the score by 10
             goToNextStage(); // Move to the next stage immediately
             setAnswer(""); // Clear the answer input
             generateRandomNumbers();
         } else {
             // Standard timeout behavior
-            setScore((prevScore) => prevScore - 5); // Decrease the score by 5 on timeout
+            setScore((prevScore) => prevScore - 2); // Decrease the score by 5 on timeout
     
             // Display timeout message to the user
             Swal.fire({
