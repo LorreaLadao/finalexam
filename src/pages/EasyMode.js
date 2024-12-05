@@ -82,7 +82,7 @@ export default function EasyMode() {
       <Container fluid className="vh-100 d-flex align-items-center justify-content-center">
         <Container fluid className="row d-flex align-items-center justify-content-center">
           <Container className="col-6 d-flex align-items-center justify-content-center flex-column border border-dark p-5 rounded-3 shadow" data-aos="flip-left">
-            <h1 className="display-6 fw-bold mb-4">STAGE {stage}</h1>
+          <h1 className="display-6 fw bold mb-4">PROBLEM {stage}</h1>
             <Container className="col-5 d-flex align-items-center justify-content-center gap-1">
               <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
                 <h1 className="display-3 fw-bold">{randomNum1}</h1>
