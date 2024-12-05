@@ -15,6 +15,8 @@ export default function MediumMode() {
   const [timer, setTimer] = useState(20);
   const [paused, setPaused] = useState(false);
   const [operation, setOperation] = useState("+");
+  const [isSwalOpen, setIsSwalOpen] = useState(false); // Flag to track if Swal is open
+
   useEffect(() => {
     if (!playerName) {
       navigate("/");
@@ -50,7 +52,11 @@ export default function MediumMode() {
         title: "Congratulations!",
         text: `You completed the game with a score of ${score}!`,
         icon: "success",
-      }).then(() => navigate("/select-level"));
+      }).then(() => {
+        setTimeout(() => {
+          navigate("/select-level");
+        }, 1000); // Add a small delay to ensure the alert is visible for a moment
+      });
     } else {
       setStage((prev) => prev + 1);
       setAnswer("");
@@ -61,12 +67,15 @@ export default function MediumMode() {
 
   const pauseBeforeStart = () => {
     if (stage === 1) {
-      setPaused(true);
+      setPaused(true); // Set the game to paused state
       Swal.fire({
         title: "Game Paused",
         text: "Click 'OK' to start!",
         icon: "info",
-      }).then(() => setPaused(false));
+      }).then(() => {
+        setPaused(false); // Unpause the game after clicking 'OK'
+        setTimer(20); // Reset timer to 20 seconds
+      });
     }
   };
 
@@ -87,18 +96,45 @@ export default function MediumMode() {
     setOperation(op);
   };
 
-  const checkAnswer = () => {
+  const checkAnswer = async () => {
+    if (isSwalOpen) return; // Prevent further checks if Swal is open
+
     const correctAnswer =
       operation === "+" ? randomNum1 + randomNum2 : randomNum1 - randomNum2;
+
     if (Number(answer) === correctAnswer) {
       const timeBonus = timer >= 15 ? 10 : timer >= 10 ? 7 : timer > 0 ? 5 : 0;
       setScore((prev) => prev + timeBonus);
-      Swal.fire("Correct!", "Good job!", "success").then(() => {
-        goToNextStage();
+
+      // Wait for the Swal alert to be closed by the user before proceeding
+      setIsSwalOpen(true); // Set the Swal flag to open
+      await Swal.fire({
+        title: "Correct!",
+        text: "Good job!",
+        icon: "success",
       });
+      setIsSwalOpen(false); // Reset Swal flag after alert is closed
+
+      // Now, proceed to the next stage after the alert is closed
+      goToNextStage();
     } else {
       setScore((prev) => prev - 5);
-      Swal.fire("Incorrect!", "Try again!", "error");
+
+      // Wait for the Swal alert to be closed by the user before proceeding
+      setIsSwalOpen(true); // Set the Swal flag to open
+      await Swal.fire({
+        title: "Incorrect!",
+        text: "Try again!",
+        icon: "error",
+      });
+      setIsSwalOpen(false); // Reset Swal flag after alert is closed
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !isSwalOpen) { // Prevent submitting if Swal is open
+      e.preventDefault(); // Prevent default form submission
+      checkAnswer();
     }
   };
 
@@ -109,14 +145,8 @@ export default function MediumMode() {
         <h1>SCORE: {score}</h1>
         <h1>Time: {timer}</h1>
       </Container>
-      <Container
-        fluid
-        className=" vh-100 d-flex align-items-center justify-content-center"
-      >
-        <Container
-          fluid
-          className="row d-flex align-items-center justify-content-center "
-        >
+      <Container fluid className="vh-100 d-flex align-items-center justify-content-center">
+        <Container fluid className="row d-flex align-items-center justify-content-center">
           <Container
             className="col-6 d-flex align-items-center justify-content-center flex-column border border-dark p-5 rounded-3 shadow"
             data-aos="flip-left"
@@ -141,13 +171,14 @@ export default function MediumMode() {
                   placeholder="Type your answer"
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
+                  onKeyDown={handleKeyDown} // Handle Enter key
                   className="rounded-pill"
                   size="lg"
                 />
                 <Button
                   className="rounded-pill mt-5 w-100"
                   onClick={checkAnswer}
-                  disabled={timer === 0}
+                  disabled={timer === 0 || isSwalOpen} // Disable button if Swal is open
                 >
                   Submit
                 </Button>
