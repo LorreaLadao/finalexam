@@ -118,19 +118,28 @@ export default function HardMode() {
     }
     
     function handleTimeout() {
-        setScore(score - 5);  // Decrease the score on timeout
+        if (doublePointsActive) {
+            // If double points are active, deduct 10 points and skip the popup
+            setScore((prevScore) => prevScore - 5); // Decrease the score by 10
+            goToNextStage(); // Move to the next stage immediately
+            setAnswer(""); // Clear the answer input
+            generateRandomNumbers();
+        } else {
+            // Standard timeout behavior
+            setScore((prevScore) => prevScore - 5); // Decrease the score by 5 on timeout
     
-        // Display timeout message to the user
-        Swal.fire({
-            title: "Timeout!",
-            text: "You ran out of time!",
-            icon: "error",
-            willClose: () => {
-                goToNextStage();
-            }
-        });
+            // Display timeout message to the user
+            Swal.fire({
+                title: "Timeout!",
+                text: "You ran out of time!",
+                icon: "error",
+                willClose: () => {
+                    goToNextStage(); // Proceed to the next stage after the popup
+                }
+            });
+        }
     }
-
+    
     const startCountdown = () => {
         let countdown = 6; // Countdown duration (6 seconds)
         
@@ -239,10 +248,7 @@ export default function HardMode() {
         if (timeFreezeActive) {
             setPaused(true); // Pause the game and the countdown if time freeze is active
         } else {
-            // If not in time freeze, resume the countdown if game is unpaused
-            if (!paused) {
-                startCountdown(); // Continue the countdown from where it left off
-            }
+        
         }
     }
     
@@ -255,7 +261,8 @@ export default function HardMode() {
     
         // Handle timer behavior based on active modifiers
         if (timeFreezeActive) {
-            setPaused(true); // Keep the timer paused if time freeze is active
+            setPaused(false); // Resume the game timer as time freeze ends
+            setTimeFreezeActive(false); // Deactivate the time freeze explicitly
         } else {
             setPaused(false); // Resume the timer if no time freeze
             if (timer === 0) {
@@ -264,7 +271,7 @@ export default function HardMode() {
         }
     
         // Check if the stage is 10 (the last stage)
-        if (stage === 9) { // Ensure this check happens before the stage is incremented
+        if (stage === 10) { // Ensure this check happens before the stage is incremented
             Swal.fire({
                 title: "Congratulations!",
                 text: `You completed Hard Mode with a score of ${score - 10}!`,
