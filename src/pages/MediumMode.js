@@ -110,20 +110,20 @@ export default function MediumMode() {
   }
 
   const generateRandomNumbers = () => {
-    let num1, num2, op;
+    let randomNum1, randomNum2, operation;
     if (stage <= 5) {
-      num1 = Math.floor(Math.random() * 100) + 1;
-      num2 = Math.floor(Math.random() * 100) + 1;
-      op = "+";
+      randomNum1 = Math.floor(Math.random() * 100) + 1;
+      randomNum2 = Math.floor(Math.random() * 100) + 1;
+      operation = "+";
     } else {
-      num1 = Math.floor(Math.random() * 100) + 1;
-      num2 = Math.floor(Math.random() * 100) + 1;
-      op = Math.random() < 0.5 ? "+" : "-";
-      if (op === "-" && num2 > num1) [num1, num2] = [num2, num1];
+      randomNum1 = Math.floor(Math.random() * 100) + 1;
+      randomNum2 = Math.floor(Math.random() * 100) + 1;
+      operation = Math.random() < 0.5 ? "+" : "-";
+      if (operation === "-" && randomNum2 > randomNum1) [randomNum1, randomNum2] = [randomNum2, randomNum1];
     }
-    setRandomNum1(num1);
-    setRandomNum2(num2);
-    setOperation(op);
+    setRandomNum1(randomNum1);
+    setRandomNum2(randomNum2);
+    setOperation(operation);
   };
 
   const checkAnswer = async () => {
