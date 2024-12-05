@@ -36,7 +36,7 @@ export default function MediumMode() {
   }, [timer, paused]);
 
   const handleTimeout = () => {
-    setScore((prev) => prev - 2);
+    setScore((prev) => prev - 5);
     Swal.fire({
       title: "Timeout!",
       text: "You ran out of time!",
@@ -110,20 +110,22 @@ export default function MediumMode() {
   }
 
   const generateRandomNumbers = () => {
-    let randomNum1, randomNum2, operation;
-    if (stage <= 5) {
-      randomNum1 = Math.floor(Math.random() * 100) + 1;
-      randomNum2 = Math.floor(Math.random() * 100) + 1;
-      operation = "+";
-    } else {
-      randomNum1 = Math.floor(Math.random() * 100) + 1;
-      randomNum2 = Math.floor(Math.random() * 100) + 1;
-      operation = Math.random() < 0.5 ? "+" : "-";
-      if (operation === "-" && randomNum2 > randomNum1) [randomNum1, randomNum2] = [randomNum2, randomNum1];
-    }
-    setRandomNum1(randomNum1);
-    setRandomNum2(randomNum2);
-    setOperation(operation);
+    let num1, num2, op;
+    if (stage <= 4) {
+      // Stage >= 4: Use addition only
+      num1 = Math.floor(Math.random() * 100) + 1;
+      num2 = Math.floor(Math.random() * 100) + 1;
+      op = "+";
+    } else if (stage >= 5) {
+      // Stage <= 5: Randomly choose between "+" and "-"
+      num1 = Math.floor(Math.random() * 100) + 1;
+      num2 = Math.floor(Math.random() * 100) + 1;
+      op = Math.random() < 0.5 ? "+" : "-";
+    } 
+    setRandomNum1(num1);
+    setRandomNum2(num2);
+    setOperation(op);
+
   };
 
   const checkAnswer = async () => {
@@ -148,7 +150,7 @@ export default function MediumMode() {
       // Now, proceed to the next stage after the alert is closed
       goToNextStage();
     } else {
-      setScore((prev) => prev - 5);
+      setScore((prev) => prev - 2);
 
       // Wait for the Swal alert to be closed by the user before proceeding
       setIsSwalOpen(true); // Set the Swal flag to open
@@ -190,7 +192,7 @@ export default function MediumMode() {
             className="col-6 d-flex align-items-center justify-content-center flex-column border border-dark p-5 rounded-3 shadow"
             data-aos="flip-left"
           >
-            <h1 className="display-6 fw bold mb-4">STAGE {stage}</h1>
+            <h1 className="display-6 fw bold mb-4">PROBLEM {stage}</h1>
             <Container className="col-5 d-flex align-items-center justify-content-center gap-1">
               <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
                 <h1 className="display-3 fw-bold">{randomNum1}</h1>
