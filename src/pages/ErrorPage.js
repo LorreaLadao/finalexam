@@ -1,36 +1,15 @@
-import { useState } from "react";
-import {Container, Form, Button} from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Container, Button } from "react-bootstrap"
+import { Link } from "react-router-dom"
 
-
-
-export default function WelcomePage(){
-
-    const [playerName, setPlayerName] = useState("");
-    console.log(playerName);
-
-    function storePlayerName(){
-        localStorage.setItem("playerName", playerName);
-    }
-
+export default function ErrorPage(){
     return(
-        <Container fluid className="p-5 bg-warning vh-100">
-            <Container className="d-flex flex-column justify-content-center align-items-center">
-                <h1 className="display-3 fw-bold">Guess the Value!</h1>
-
-                <Form className="mt-5">
-                    <Form.Group className="mb-3 d-flex flex-column justify-content-center align-items-center" controlId="exampleForm.ControlInput1">
-
-                        <h3 className="display-6 fw-bold">Please enter your name</h3>
-
-                        <Form.Control type="text" placeholder="Type Here..." onChange={e => setPlayerName(e.target.value)} value={playerName} className=" rounded-pill" size="lg"/>
-
-                        <Button className="px-5 rounded-pill mt-5" onClick={storePlayerName} as={Link} to="/select-level">ENTER</Button>
-
-                    </Form.Group>
-                </Form>
-
+        <Container fluid className="bg-warning vh-100 p-5">
+            <Container className="d-flex flex-column justify-content-center align-items-center p-3">
+                <h1 className="display-3 fw-bold my-3">PAGE NOT FOUND!</h1>
+                <p>We cannot find the page you are trying to access.</p>
+                <Button size="lg" className="rounded-pill px-5 mt-5" as={Link} to="/">Go Back</Button>
             </Container>
+
         </Container>
     )
 }
