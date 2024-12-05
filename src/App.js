@@ -9,6 +9,7 @@ import 'aos/dist/aos.css';
 import EasyMode from './pages/EasyMode';
 import MediumMode from './pages/MediumMode';
 import HardMode from './pages/HardMode';
+// import Scoreboard from './pages/Scoreboard';
 
 function App() {
   AOS.init();
@@ -20,6 +21,7 @@ function App() {
           <Route path="/easy" element={<EasyMode />} />
           <Route path="/medium" element={<MediumMode />} />
           <Route path="/hard" element={<HardMode />} />
+          {/* <Route path="/Scoreboard" element={<Scoreboard />} /> */}
           <Route path="*" element={<ErrorPage />} />
       </Routes>
     </BrowserRouter>
