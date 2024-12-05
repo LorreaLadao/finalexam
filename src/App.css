@@ -27,6 +27,11 @@
   animation-delay: 0s, 7s; /* Start exit animation after the message stays for 5 seconds */
 }
 
+.freeze-notif{
+  background-color: #0c708b;
+  color: white;
+}
+
 .time-freeze-active {
   color: #61dafb; /* Or any color you'd like */
 }

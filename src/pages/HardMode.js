@@ -188,11 +188,33 @@ export default function HardMode() {
     
         let points = 0;
     
-        // Check if the answer is correct
-        if (Number(answer) === correctAnswer) {
-            const timeBonus = timer >= 7 ? 15 : timer >= 4 ? 10 : timer >= 1 ? 5 : 0;
-    
-            points = timeBonus;
+       // Check if the answer is correct
+    if (Number(answer) === correctAnswer) {
+        const timeBonus = timer >= 7 ? 15 : timer >= 4 ? 10 : timer >= 1 ? 5 : 0;
+
+        points = timeBonus;
+
+        if (timer > 7) {
+            const chance = Math.random();
+            if (chance < 0.33 && timeFreezeUsed) {
+                setFlashMessage(
+                    <div className={`flash-message freeze-notif rounded mb-4 ${flashing ? "flashing" : ""}`} style={{ width: '1700%' }}>
+                        Time Freeze Available!
+                    </div>
+                );
+                setTimeFreezeUsed(false); // Enable Time Freeze power-up
+            } else if (chance < 0.66 && doublePointsUsed) {
+                setFlashMessage(
+                    <div className={`flash-message double rounded mb-4 ${flashing ? "flashing" : ""}`} style={{ width: '1700%' }}>
+                        Double Points Available!
+                    </div>
+                );
+                setDoublePointsUsed(false); // Enable Double Points power-up
+            } 
+            // The remaining 33% chance awards no power-up
+        }
+        
+
     
             // If double points are active, apply the bonus
             if (doublePointsActive) {
@@ -221,7 +243,7 @@ export default function HardMode() {
             // Handle incorrect answer
             if (doublePointsActive) {
                 // If double points are active, deduct points but stay on the same stage
-                setScore(score - 10); // Deduct 10 points for incorrect answer
+                setScore(score - 5); // Deduct 10 points for incorrect answer
                 setAnswer(""); // Clear the answer input
 
             } else {
@@ -229,10 +251,10 @@ export default function HardMode() {
                 setPaused(true); // Pause the game when Swal is active
                 Swal.fire({
                     title: "Incorrect!",
-                    text: "You lost 10 points! Try again.",
+                    text: "You lost 5 points! Try again.",
                     icon: "error",
                 }).then(() => {
-                    setScore(score - 10); // Deduct points for incorrect answer
+                    setScore(score - 5); // Deduct points for incorrect answer
                     setAnswer(""); // Clear the answer input
 
                     // Resume the game after Swal is closed
@@ -376,22 +398,27 @@ export default function HardMode() {
     
           <Container fluid className="vh-100 d-flex align-items-center justify-content-center">
             <Container className="col-6 d-flex align-items-center justify-content-center flex-column border border-dark p-5 rounded-3 shadow bg-light text-dark">
-              <h1 className="display-6 fw-bold mb-4">Stage {stage}</h1>
+              <h1 className="display-6 fw-bold mb-4">PROBLEM {stage}</h1>
     
               <Container className="col-5 d-flex align-items-center justify-content-center gap-1">
-              {timer > 5 && (!flashing || stage >= 1) && (
-            <>
-                <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
-                <h1 className="display-3 fw-bold">{randomNum1}</h1>
-                </Container>
-                <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
-                <h3 className="display-3 fw-bold">{operation}</h3>
-                </Container>
-                <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
-                <h1 className="display-3 fw-bold">{randomNum2}</h1>
-                </Container>
-            </>
-                )}
+              {!flashing || stage >= 1 ? (
+                <>
+                    {timer > 5 && (
+                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                        <h1 className="display-3 fw-bold">{randomNum1}</h1>
+                    </Container>
+                    )}
+                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                    <h3 className="display-3 fw-bold">{operation}</h3>
+                    </Container>
+                    {timer > 5 && (
+                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                        <h1 className="display-3 fw-bold">{randomNum2}</h1>
+                    </Container>
+                    )}
+                </>
+                ) : null}
+
 
               </Container>
     
