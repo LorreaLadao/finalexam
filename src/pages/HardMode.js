@@ -20,6 +20,7 @@ export default function HardMode() {
     const [flashing, setFlashing] = useState(false);
     const [paused, setPaused] = useState(false); // Paused state for the timer
     const [flashMessage, setFlashMessage] = useState("");
+    const [flashFreeze, setFlashFreeze] = useState("");
 
     useEffect(() => {
         if (!playerName) {
@@ -126,7 +127,7 @@ export default function HardMode() {
             generateRandomNumbers();
         } else {
             // Standard timeout behavior
-            setScore((prevScore) => prevScore - 2); // Decrease the score by 5 on timeout
+            setScore((prevScore) => prevScore - 5); // Decrease the score by 5 on timeout
     
             // Display timeout message to the user
             Swal.fire({
@@ -197,15 +198,15 @@ export default function HardMode() {
         if (timer > 7) {
             const chance = Math.random();
             if (chance < 0.33 && timeFreezeUsed) {
-                setFlashMessage(
-                    <div className={`flash-message freeze-notif rounded mb-4 ${flashing ? "flashing" : ""}`} style={{ width: '1700%' }}>
+                setFlashFreeze(
+                    <div className={`flash-message double rounded mb-4 ${flashing ? "flashing" : ""}`} style={{ width: '1700%', left: '-20%' }}>
                         Time Freeze Available!
                     </div>
                 );
                 setTimeFreezeUsed(false); // Enable Time Freeze power-up
             } else if (chance < 0.66 && doublePointsUsed) {
-                setFlashMessage(
-                    <div className={`flash-message double rounded mb-4 ${flashing ? "flashing" : ""}`} style={{ width: '1700%' }}>
+                setFlashFreeze(
+                    <div className={`flash-message double rounded mb-4 ${flashing ? "flashing" : ""}`} style={{ width: '1700%', left: '-20%' }}>
                         Double Points Available!
                     </div>
                 );
@@ -243,7 +244,7 @@ export default function HardMode() {
             // Handle incorrect answer
             if (doublePointsActive) {
                 // If double points are active, deduct points but stay on the same stage
-                setScore(score - 5); // Deduct 10 points for incorrect answer
+                setScore(score - 2); // Deduct 10 points for incorrect answer
                 setAnswer(""); // Clear the answer input
 
             } else {
@@ -251,10 +252,10 @@ export default function HardMode() {
                 setPaused(true); // Pause the game when Swal is active
                 Swal.fire({
                     title: "Incorrect!",
-                    text: "You lost 5 points! Try again.",
+                    text: "You lost 2 points! Try again.",
                     icon: "error",
                 }).then(() => {
-                    setScore(score - 5); // Deduct points for incorrect answer
+                    setScore(score - 2); // Deduct points for incorrect answer
                     setAnswer(""); // Clear the answer input
 
                     // Resume the game after Swal is closed
@@ -378,11 +379,19 @@ export default function HardMode() {
     
     return (
 
-         <Container fluid className="d-flex flex-column m-0 p-0 bg-danger p-5 text-white">
+        <Container fluid className="d-flex flex-column m-0 p-0 bg-danger p-5 text-white">
+        {/* Flash Messages */}
+        {flashMessage && (
+          <div className={`flash-message text-dark p-3 rounded mb-2`}>
+            <h5>{flashMessage}</h5>
+          </div>
+        )}
+
+<Container fluid className="d-flex flex-column m-0 p-0 bg-danger p-5 text-white">
           {/* Flash Messages */}
-          {flashMessage && (
+          {flashFreeze && (
             <div className={`flash-message text-dark p-3 rounded mb-2`}>
-              <h5>{flashMessage}</h5>
+              <h5>{flashFreeze}</h5>
             </div>
           )}
           
@@ -466,6 +475,7 @@ export default function HardMode() {
               </Container>
               </Container>
           </Container>
+        </Container>
         </Container>
       );
     }
