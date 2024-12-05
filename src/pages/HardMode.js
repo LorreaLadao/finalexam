@@ -190,9 +190,9 @@ export default function HardMode() {
     
        // Check if the answer is correct
     if (Number(answer) === correctAnswer) {
-        const timeBonus = timer >= 7 ? 15 : timer >= 4 ? 10 : timer >= 1 ? 5 : 0;
 
-        points = timeBonus;
+
+        points = 5
 
         if (timer > 7) {
             const chance = Math.random();
