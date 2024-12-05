@@ -6,10 +6,10 @@ import Swal from "sweetalert2";
 export default function MediumMode() {
   let playerName = localStorage.getItem("playerName");
   const navigate = useNavigate();
-
+  const [timeFreezeActive, setTimeFreezeActive] = useState(false);
   const [randomNum1, setRandomNum1] = useState(0);
   const [randomNum2, setRandomNum2] = useState(0);
-  const [answer, setAnswer] = useState(0);
+  const [answer, setAnswer] = useState();
   const [stage, setStage] = useState(1);
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(20);
@@ -65,29 +65,59 @@ export default function MediumMode() {
     }
   };
 
-  const pauseBeforeStart = () => {
+  function pauseBeforeStart() {
+    console.log("Current stage:", stage); // Log the current stage
+
     if (stage === 1) {
-      setPaused(true); // Set the game to paused state
+      // Only pause at stage 1
+      setPaused(true); // Pause initially
+
       Swal.fire({
         title: "Game Paused",
         text: "Click 'OK' to start!",
         icon: "info",
-      }).then(() => {
-        setPaused(false); // Unpause the game after clicking 'OK'
-        setTimer(20); // Reset timer to 20 seconds
+        showConfirmButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let countdown = 3;
+          const countdownInterval = setInterval(() => {
+            Swal.fire({
+              title: `Resuming in ${countdown}...`,
+              text: "Get ready!",
+              icon: "info",
+              showConfirmButton: false,
+              timer: 1000,
+              timerProgressBar: true,
+            });
+
+            countdown -= 1;
+
+            if (countdown < 1) {
+              clearInterval(countdownInterval); // Stop countdown
+              setPaused(false); // Resume game
+            }
+          }, 1000);
+        }
       });
+    } else {
+      setPaused(false); // No pause if not at stage 1
     }
-  };
+
+    // Ensure the time freeze countdown is paused when the game is paused
+    if (timeFreezeActive) {
+      setPaused(true); // Pause both the game and time freeze
+    }
+  }
 
   const generateRandomNumbers = () => {
     let num1, num2, op;
     if (stage <= 5) {
-      num1 = Math.floor(Math.random() * 500) + 1;
-      num2 = Math.floor(Math.random() * 500) + 1;
+      num1 = Math.floor(Math.random() * 100) + 1;
+      num2 = Math.floor(Math.random() * 100) + 1;
       op = "+";
     } else {
-      num1 = Math.floor(Math.random() * 500) + 1;
-      num2 = Math.floor(Math.random() * 500) + 1;
+      num1 = Math.floor(Math.random() * 100) + 1;
+      num2 = Math.floor(Math.random() * 100) + 1;
       op = Math.random() < 0.5 ? "+" : "-";
       if (op === "-" && num2 > num1) [num1, num2] = [num2, num1];
     }
@@ -132,7 +162,8 @@ export default function MediumMode() {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !isSwalOpen) { // Prevent submitting if Swal is open
+    if (e.key === "Enter" && !isSwalOpen) {
+      // Prevent submitting if Swal is open
       e.preventDefault(); // Prevent default form submission
       checkAnswer();
     }
@@ -143,10 +174,18 @@ export default function MediumMode() {
       <Container fluid className="d-flex">
         <h1 className="me-auto">Welcome, {playerName}!</h1>
         <h1>SCORE: {score}</h1>
-        <h1>Time: {timer}</h1>
+        <h1 className={timeFreezeActive ? "time-freeze-active" : "time-normal"}>
+          Time: {timer}
+        </h1>
       </Container>
-      <Container fluid className="vh-100 d-flex align-items-center justify-content-center">
-        <Container fluid className="row d-flex align-items-center justify-content-center">
+      <Container
+        fluid
+        className="vh-100 d-flex align-items-center justify-content-center"
+      >
+        <Container
+          fluid
+          className="row d-flex align-items-center justify-content-center"
+        >
           <Container
             className="col-6 d-flex align-items-center justify-content-center flex-column border border-dark p-5 rounded-3 shadow"
             data-aos="flip-left"
@@ -156,8 +195,8 @@ export default function MediumMode() {
               <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
                 <h1 className="display-3 fw-bold">{randomNum1}</h1>
               </Container>
-              <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
-                <h3 className="display-3 fw-bold">{operation}</h3>
+              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
+                      <h3 className="display-3 fw-bold">{operation}</h3>
               </Container>
               <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
                 <h1 className="display-3 fw-bold">{randomNum2}</h1>
