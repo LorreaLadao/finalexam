@@ -220,30 +220,28 @@ export default function HardMode() {
         } else {
             // Handle incorrect answer
             if (doublePointsActive) {
-                // If double points are active, proceed without a popup
+                // If double points are active, deduct points but stay on the same stage
                 setScore(score - 10); // Deduct 10 points for incorrect answer
-                setPaused(true); // Pause game on incorrect answer when double points are active
                 setAnswer(""); // Clear the answer input
-    
-                // Immediately generate a new set of random numbers for the next question
-                generateRandomNumbers();
-    
-                // Move to the next stage without a popup
-                goToNextStage();
+
             } else {
                 // Standard pop-up for incorrect answer (without double points)
+                setPaused(true); // Pause the game when Swal is active
                 Swal.fire({
                     title: "Incorrect!",
-                    text: "You lost 10 points!",
+                    text: "You lost 10 points! Try again.",
                     icon: "error",
                 }).then(() => {
                     setScore(score - 10); // Deduct points for incorrect answer
                     setAnswer(""); // Clear the answer input
-                    goToNextStage(); // Proceed to the next stage
+
+                    // Resume the game after Swal is closed
+                    setPaused(false);
                 });
             }
+
         }
-    
+        
         // Handle the time freeze effect here
         if (timeFreezeActive) {
             setPaused(true); // Pause the game and the countdown if time freeze is active
@@ -398,14 +396,20 @@ export default function HardMode() {
     
               <Form className="mt-5">
                 <Form.Group className="mb-3 d-flex flex-column justify-content-center align-items-center">
-                  <Form.Control
-                    type="number"
-                    placeholder="Type your answer"
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                    className="rounded-pill"
-                    size="lg"
-                  />
+                <Form.Control
+                type="number"
+                placeholder="Type your answer"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault(); // Prevent default behavior (e.g., form submission)
+                        checkAnswer(); // Call the checkAnswer function
+                    }
+                }}
+                className="rounded-pill"
+                size="lg"
+            />
                   <Button
                     className="rounded-pill mt-5 w-100"
                     onClick={checkAnswer}
