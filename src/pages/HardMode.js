@@ -379,19 +379,20 @@ export default function HardMode() {
               <h1 className="display-6 fw-bold mb-4">Stage {stage}</h1>
     
               <Container className="col-5 d-flex align-items-center justify-content-center gap-1">
-                {(!flashing || stage >= 1) && (
-                  <>
-                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
-                      <h1 className="display-3 fw-bold">{randomNum1}</h1>
-                    </Container>
-                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
-                      <h3 className="display-3 fw-bold">{operation}</h3>
-                    </Container>
-                    <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
-                      <h1 className="display-3 fw-bold">{randomNum2}</h1>
-                    </Container>
-                  </>
+              {timer > 5 && (!flashing || stage >= 1) && (
+            <>
+                <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                <h1 className="display-3 fw-bold">{randomNum1}</h1>
+                </Container>
+                <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                <h3 className="display-3 fw-bold">{operation}</h3>
+                </Container>
+                <Container className="col-10 bg-warning d-flex align-items-center justify-content-center p-5 rounded-3">
+                <h1 className="display-3 fw-bold">{randomNum2}</h1>
+                </Container>
+            </>
                 )}
+
               </Container>
     
               <Form className="mt-5">
