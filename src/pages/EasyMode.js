@@ -89,6 +89,10 @@ export default function EasyMode() {
               </Container>
 
               <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
+                <h1 className="display-3 fw-bold">+</h1>
+              </Container>
+
+              <Container className="col-12 bg-light d-flex align-items-center justify-content-center p-5 rounded-3">
                 <h1 className="display-3 fw-bold">{randomNum2}</h1>
               </Container>
             </Container>
