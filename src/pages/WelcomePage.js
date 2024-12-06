@@ -20,29 +20,36 @@ export default function WelcomePage() {
       <Container className="game-container w-25 h-50 d-flex flex-column justify-content-center align-items-center">
         <h1 className="game-title">Guess the Value!</h1>
 
-        <Form className="game-form mt-5">
-          <Form.Group
-            className="mb-3 d-flex flex-column justify-content-center align-items-center"
-            controlId="exampleForm.ControlInput1"
-          >
-            <Form.Control
-              type="text"
-              placeholder="Enter username..."
-              onChange={(e) => setPlayerName(e.target.value)}
-              value={playerName}
-              className="rounded-3 p-2"
-            />
+        <Form
+  className="game-form mt-5"
+  onSubmit={(e) => {
+    e.preventDefault(); // Prevent page reload
+    storePlayerName();  // Call your function to handle the player name
+    window.location.href = "/select-level"; // Navigate to the desired page
+  }}
+>
+  <Form.Group
+    className="mb-3 d-flex flex-column justify-content-center align-items-center"
+    controlId="exampleForm.ControlInput1"
+  >
+    <Form.Control
+      type="text"
+      placeholder="Enter username..."
+      onChange={(e) => setPlayerName(e.target.value)}
+      value={playerName}
+      className="rounded-3 p-2"
+    />
 
-            <Button
-              className="rounded-3 mt-2 w-100 p-2 bg-primary text-black text-white custom-border"
-              onClick={storePlayerName}
-              as={Link}
-              to="/select-level"
-            >
-              ENTER
-            </Button>
-          </Form.Group>
-        </Form>
+    <Button
+      type="submit" // Set the button type to "submit"
+      className="rounded-3 mt-2 w-100 p-2 bg-primary text-black text-white custom-border"
+    >
+      ENTER
+    </Button>
+  </Form.Group>
+</Form>
+
+
 
         {showFlashMessage && (
           <div className="flash-message">
