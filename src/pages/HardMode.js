@@ -16,19 +16,19 @@ export default function HardMode() {
     const [timeFreezeUsed, setTimeFreezeUsed] = useState(false);
     const [timeFreezeActive, setTimeFreezeActive] = useState(false);
     const [doublePointsUsed, setDoublePointsUsed] = useState(false);
-    const [doublePointsActive, setDoublePointsActive] = useState(false);  // New state to track if double points are active
+    const [doublePointsActive, setDoublePointsActive] = useState(false);
     const [flashing, setFlashing] = useState(false);
-    const [paused, setPaused] = useState(false); // Paused state for the timer
+    const [paused, setPaused] = useState(false);
     const [flashMessage, setFlashMessage] = useState("");
     const [flashFreeze, setFlashFreeze] = useState("");
 
     useEffect(() => {
         if (!playerName) {
-            navigate("/"); // Redirect to home if no player name
+            navigate("/");
             return;
         }
         generateRandomNumbers();
-        pauseBeforeStart(); // Pause before starting
+        pauseBeforeStart();
     }, []);
 
     useEffect(() => {
@@ -40,13 +40,13 @@ export default function HardMode() {
                 handleTimeout();
             }
         }
-    }, [timer, paused]); // Listen to paused state
+    }, [timer, paused]);
 
     function pauseBeforeStart() {
-        console.log("Current stage:", stage); // Log the current stage
+        console.log("Current stage:", stage);
     
-        if (stage === 1) { // Only pause at stage 1
-            setPaused(true); // Pause initially
+        if (stage === 1) {
+            setPaused(true);
     
             Swal.fire({
                 title: "Game Paused",
@@ -69,19 +69,18 @@ export default function HardMode() {
                         countdown -= 1;
     
                         if (countdown < 1) {
-                            clearInterval(countdownInterval); // Stop countdown
-                            setPaused(false); // Resume game
+                            clearInterval(countdownInterval);
+                            setPaused(false);
                         }
                     }, 1000);
                 }
             });
         } else {
-            setPaused(false); // No pause if not at stage 1
+            setPaused(false);
         }
     
-        // Ensure the time freeze countdown is paused when the game is paused
         if (timeFreezeActive) {
-            setPaused(true); // Pause both the game and time freeze
+            setPaused(true);
         }
     }
     
@@ -89,23 +88,19 @@ export default function HardMode() {
     function generateRandomNumbers() {
         let num1, num2, operation;
     
-        // For stages 1-5, only addition with numbers from 1 to 100
         if (stage <= 5) {
             num1 = Math.floor(Math.random() * 100) + 1;
             num2 = Math.floor(Math.random() * 100) + 1;
             operation = "+";
         }
-        // For stages 6-10, 50-50 chance of addition or subtraction (with no negative results)
         else {
             num1 = Math.floor(Math.random() * 100) + 1;
             num2 = Math.floor(Math.random() * 100) + 1;
     
-            // Randomly choose between addition or subtraction
             if (Math.random() < 0.5) {
                 operation = "+";
             } else {
                 operation = "-";
-                // Ensure num2 is not greater than num1 for subtraction
                 if (num2 > num1) {
                     [num1, num2] = [num2, num1];
                 }
@@ -120,67 +115,58 @@ export default function HardMode() {
     
     function handleTimeout() {
         if (doublePointsActive) {
-            // If double points are active, deduct 10 points and skip the popup
-            setScore((prevScore) => prevScore - 2); // Decrease the score by 10
-            goToNextStage(); // Move to the next stage immediately
-            setAnswer(""); // Clear the answer input
+            setScore((prevScore) => prevScore - 2);
+            goToNextStage();
+            setAnswer("");
             generateRandomNumbers();
         } else {
-            // Standard timeout behavior
-            setScore((prevScore) => prevScore - 5); // Decrease the score by 5 on timeout
+            setScore((prevScore) => prevScore - 5);
     
-            // Display timeout message to the user
             Swal.fire({
                 title: "Timeout!",
                 text: "You ran out of time!",
                 icon: "error",
                 willClose: () => {
-                    goToNextStage(); // Proceed to the next stage after the popup
+                    goToNextStage();
                 }
             });
         }
     }
     
     const startCountdown = () => {
-        let countdown = 6; // Countdown duration (6 seconds)
+        let countdown = 6;
         
-        // Start the countdown interval
         let countdownInterval = setInterval(() => {
-            if (!paused) { // Only proceed if the game is not paused
+            if (!paused) {
                 countdown -= 1;
                 
-                // Check if the countdown reaches 0
                 if (countdown <= 0) {
-                    clearInterval(countdownInterval); // Stop the countdown
-                    setTimeFreezeActive(false); // Set timeFreezeActive to false after freeze ends
-                    setPaused(false); // Resume the game after countdown finishes
+                    clearInterval(countdownInterval);
+                    setTimeFreezeActive(false);
+                    setPaused(false);
                 }
             }
         }, 1000);
     
-        // Freeze the countdown for exactly 6 seconds if timeFreeze is active
         if (timeFreezeActive) {
-            setPaused(true); // Pause the game immediately when time freeze is active
-    
-            // After 6 seconds, resume the countdown and the game
+            setPaused(true);
+
             setTimeout(() => {
-                setPaused(false); // Unpause the game after 6 seconds
-                clearInterval(countdownInterval); // Ensure countdown finishes
-            }, 6000); // Freeze duration is 6 seconds
+                setPaused(false);
+                clearInterval(countdownInterval);
+            }, 6000);
         }
     
     };
     
     
     function checkAnswer() {
-        // Only pause if double points are not active and the game is not paused
         if (!doublePointsActive && !paused) {
-            setPaused(true); // Stop timer when answer is submitted
+            setPaused(true);
         }
     
         let correctAnswer;
-    
-        // Calculate the correct answer based on the operation
+
         if (operation === "+") {
             correctAnswer = randomNum1 + randomNum2;
         } else if (operation === "-") {
@@ -188,8 +174,7 @@ export default function HardMode() {
         }
     
         let points = 0;
-    
-       // Check if the answer is correct
+
     if (Number(answer) === correctAnswer) {
 
 
@@ -203,34 +188,30 @@ export default function HardMode() {
                         Time Freeze Available!
                     </div>
                 );
-                setTimeFreezeUsed(false); // Enable Time Freeze power-up
+                setTimeFreezeUsed(false);
             } else if (chance < 0.66 && doublePointsUsed) {
                 setFlashFreeze(
                     <div className={`flash-message double rounded mb-4 ${flashing ? "flashing" : ""}`} style={{ width: '1700%', left: '-20%' }}>
                         Double Points Available!
                     </div>
                 );
-                setDoublePointsUsed(false); // Enable Double Points power-up
+                setDoublePointsUsed(false);
             } 
-            // The remaining 33% chance awards no power-up
+
         }
         
 
-    
-            // If double points are active, apply the bonus
+
             if (doublePointsActive) {
                 points *= 2;
-    
-                // Update the score immediately without popups
+
                 setScore(score + points);
-    
-                // Immediately generate a new set of random numbers for the next question
+
                 generateRandomNumbers();
-    
-                // Move to the next stage without waiting for a popup
+
                 goToNextStage();
             } else {
-                // Standard pop-up message for regular points (if double points is not active)
+
                 Swal.fire({
                     title: "Correct!",
                     text: `You earned ${points} points!`,
@@ -241,33 +222,31 @@ export default function HardMode() {
                 });
             }
         } else {
-            // Handle incorrect answer
+
             if (doublePointsActive) {
-                // If double points are active, deduct points but stay on the same stage
-                setScore(score - 2); // Deduct 10 points for incorrect answer
-                setAnswer(""); // Clear the answer input
+
+                setScore(score - 2);
+                setAnswer("");
 
             } else {
-                // Standard pop-up for incorrect answer (without double points)
-                setPaused(true); // Pause the game when Swal is active
+
+                setPaused(true);
                 Swal.fire({
                     title: "Incorrect!",
                     text: "You lost 2 points! Try again.",
                     icon: "error",
                 }).then(() => {
-                    setScore(score - 2); // Deduct points for incorrect answer
-                    setAnswer(""); // Clear the answer input
+                    setScore(score - 2);
+                    setAnswer("");
 
-                    // Resume the game after Swal is closed
                     setPaused(false);
                 });
             }
 
         }
-        
-        // Handle the time freeze effect here
+
         if (timeFreezeActive) {
-            setPaused(true); // Pause the game and the countdown if time freeze is active
+            setPaused(true);
         } else {
         
         }
@@ -275,30 +254,26 @@ export default function HardMode() {
     
     
     function goToNextStage() {
-        // Increment the stage and prepare for the next round
-        setStage((prevStage) => prevStage + 1); // Increment the stage
-        setAnswer(""); // Clear the answer input
-        generateRandomNumbers(); // Generate new random numbers for the next stage
-    
-        // Handle timer behavior based on active modifiers
+        setStage((prevStage) => prevStage + 1);
+        setAnswer("");
+        generateRandomNumbers();
+
         if (timeFreezeActive) {
-            setPaused(false); // Resume the game timer as time freeze ends
-            setTimeFreezeActive(false); // Deactivate the time freeze explicitly
+            setPaused(false);
+            setTimeFreezeActive(false);
         } else {
-            setPaused(false); // Resume the timer if no time freeze
+            setPaused(false);
             if (timer === 0) {
-                setTimer(10); // Reset the timer only if it reached 0, otherwise keep the current value
+                setTimer(10);
             }
         }
-    
-        // Check if the stage is 10 (the last stage)
-        if (stage === 10) { // Ensure this check happens before the stage is incremented
+
+        if (stage === 10) {
             Swal.fire({
                 title: "Congratulations!",
                 text: `You completed Hard Mode with a score of ${score - 10}!`,
                 icon: "success",
             }).then(() => {
-                // Navigate to the select-level page after completing the last stage
                 navigate("/select-level");
             });
         }
@@ -307,28 +282,21 @@ export default function HardMode() {
     
     function useTimeFreeze() {
         if (timeFreezeUsed) {
-            // Time freeze already used, do nothing or handle the notification
         } else {
-            // Activate time freeze for 5 seconds
             setTimeFreezeUsed(true);
             setTimeFreezeActive(true);
     
-            setPaused(true); // Pause the timer while time freeze is active
-    
-            // Save the countdown state
+            setPaused(true);
+
             let countdownInterval;
     
-    
-            // Start the countdown when time freeze is activated
+
             startCountdown();
-    
-            // Listen for the game pause and resume
+
             if (paused) {
-                // When the game is paused, stop the countdown (don't restart it)
                 clearInterval(countdownInterval); 
             } else {
-                // When the game is resumed, continue the countdown from where it was
-                startCountdown(); // Continue the countdown from the current state
+                startCountdown();
             }
         }
     }
@@ -336,23 +304,20 @@ export default function HardMode() {
     
     function useDoublePoints() {
         if (doublePointsUsed) {
-            // If double points are already used, return early
             return;
         } else {
-            setDoublePointsUsed(true); // Mark double points as used
-            setDoublePointsActive(true); // Set double points as active
-            setFlashing(true); // Start flashing effect
+            setDoublePointsUsed(true);
+            setDoublePointsActive(true);
+            setFlashing(true);
     
-            let countdown = 5;  // Set the initial countdown value (in seconds)
-    
-            // Set the initial flash message with countdown
+            let countdown = 5;
+
             setFlashMessage(
                 <div className="flash-message double rounded mb-4" style={{ width: '1700%' }}>
                     Double Points activated for {countdown} seconds!
                 </div>
             );
-    
-            // Start countdown and synchronize with the timer
+
             const countdownInterval = setInterval(() => {
                 setFlashMessage(
                     <div className={`flash-message double rounded mb-4 ${flashing ? "flashing" : ""}`} style={{ width: '1700%' }}>
@@ -360,19 +325,19 @@ export default function HardMode() {
                     </div>
                 );
     
-                countdown--; // Decrease the countdown
+                countdown--;
     
                 if (countdown <= -1) {
-                    clearInterval(countdownInterval);  // Stop countdown when it reaches 0
-                    setFlashing(false);  // Stop flashing effect
-                    setDoublePointsActive(false);  // Set double points as inactive
-                    setFlashMessage(  // Final flash message when countdown ends
+                    clearInterval(countdownInterval);
+                    setFlashing(false);
+                    setDoublePointsActive(false);
+                    setFlashMessage(
                         <div className="flash-message double rounded mb-4" style={{ width: '1700%' }}>
                         Double Points Deactivated
                     </div>
                     );
                 }
-            }, 1000);  // Update every second
+            }, 1000);
         }
     }
     
@@ -380,7 +345,7 @@ export default function HardMode() {
     return (
 
         <Container fluid className="d-flex flex-column m-0 p-0 p-5 text-white">
-        {/* Flash Messages */}
+        {}
         {flashMessage && (
           <div className={`flash-message text-dark p-3 rounded mb-2`}>
             <h5>{flashMessage}</h5>
@@ -388,7 +353,7 @@ export default function HardMode() {
         )}
 
 <Container fluid className="d-flex flex-column m-0 p-0 p-5 text-white">
-          {/* Flash Messages */}
+          {}
           {flashFreeze && (
             <div className={`flash-message text-dark p-3 rounded mb-2`}>
               <h5>{flashFreeze}</h5>
@@ -440,8 +405,8 @@ export default function HardMode() {
                 onChange={(e) => setAnswer(e.target.value)}
                 onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                        e.preventDefault(); // Prevent default behavior (e.g., form submission)
-                        checkAnswer(); // Call the checkAnswer function
+                        e.preventDefault();
+                        checkAnswer();
                     }
                 }}
             />
@@ -454,17 +419,16 @@ export default function HardMode() {
               <Container className="d-flex gap-2 text justify-content-center">
                 <Button
                   variant="primary"
-                  onClick={useTimeFreeze} // Updated handler
+                  onClick={useTimeFreeze}
                   disabled={timeFreezeUsed}
-                  className="w-25 custom-border"                >
+                  className="w-25 custom-border">
                   Time Freeze
                 </Button>
                 <Button
                   variant="success"
                   onClick={useDoublePoints}
                   disabled={doublePointsUsed}
-                  className="w-25 custom-border"    
-                >
+                  className="w-25 custom-border">
                   Double Points
                 </Button>
               </Container>

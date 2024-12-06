@@ -7,11 +7,11 @@ export default function WelcomePage() {
   const [showFlashMessage, setShowFlashMessage] = useState(false);
 
   function storePlayerName() {
-    if (playerName.trim() === "") return; // Prevent empty name submission
+    if (playerName.trim() === "") return;
     localStorage.setItem("playerName", playerName);
     setShowFlashMessage(true);
     setTimeout(() => {
-      setShowFlashMessage(false); // Hide flash message after 3 seconds
+      setShowFlashMessage(false);
     }, 3000);
   }
 
@@ -23,9 +23,9 @@ export default function WelcomePage() {
         <Form
   className="game-form mt-5"
   onSubmit={(e) => {
-    e.preventDefault(); // Prevent page reload
-    storePlayerName();  // Call your function to handle the player name
-    window.location.href = "/select-level"; // Navigate to the desired page
+    e.preventDefault();
+    storePlayerName();
+    window.location.href = "/select-level";
   }}
 >
   <Form.Group
@@ -41,7 +41,7 @@ export default function WelcomePage() {
     />
 
     <Button
-      type="submit" // Set the button type to "submit"
+      type="submit"
       className="rounded-3 mt-2 w-100 p-2 bg-primary text-black text-white custom-border"
     >
       ENTER

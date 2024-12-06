@@ -15,7 +15,7 @@ export default function EasyMode() {
 
   useEffect(() => {
     if (playerName == null || playerName == "") {
-      navigate("/"); // Redirect to home if no player name is found
+      navigate("/");
     }
     generateRandomNum();
   },[] );
@@ -49,7 +49,7 @@ export default function EasyMode() {
           message: "Redirecting to level select...",
           icon: "success",
         }).then(() => {
-          navigate("/select-level"); // Redirect to level select page (easy, medium, hard)
+          navigate("/select-level");
         });
       } else {
         generateRandomNum();
@@ -63,17 +63,16 @@ export default function EasyMode() {
     }
   }
 
-  // Handle Enter key to trigger the checkAnswer function
   const handleEnter = (e) => {
     if (e.key === "Enter") {
-      e.preventDefault(); // Prevent the form from submitting
-      checkAnswer(); // Trigger checkAnswer function
+      e.preventDefault();
+      checkAnswer();
     }
   };
 
   return (
     <Container fluid className="d-flex flex-column m-0 p-0 p-5">
-      {/* PLAYER NAME */}
+      {}
       <Container fluid className="d-flex">
         <h1 className="me-auto"></h1>
         <h1 className="text-white">SCORE {score}</h1>
@@ -105,7 +104,7 @@ export default function EasyMode() {
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
                   className="rounded-3 p-2"
-                  onKeyDown={handleEnter} // Detects Enter key press
+                  onKeyDown={handleEnter}
                 />
 
                 <Button className="rounded-3 mt-2 w-100 p-2 bg-warning text-white  custom-border" onClick={checkAnswer}>
